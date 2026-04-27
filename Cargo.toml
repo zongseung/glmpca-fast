@@ -1,6 +1,6 @@
 [package]
 name = "glmpca_fast"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Fast GLM-PCA (Townes et al. 2019) with Rust + optional PyTorch GPU backend."
 license = "MIT"
