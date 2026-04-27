@@ -1,0 +1,46 @@
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "glmpca-fast"
+version = "0.1.0"
+description = "Fast GLM-PCA (Townes et al. 2019) with Rust core and optional PyTorch GPU backend"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [
+    { name = "zongseung", email = "new9279@gachon.ac.kr" },
+]
+keywords = ["glm-pca", "dimensionality-reduction", "single-cell", "genotype", "rust", "pytorch", "gpu"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Rust",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+torch = ["torch>=2.0"]
+test = ["pytest>=8.0"]
+
+[project.urls]
+Repository = "https://github.com/zongseung/glmpca-fast"
+"Reference paper" = "https://doi.org/10.1186/s13059-019-1861-6"
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+module-name = "glmpca_fast._rust"
+python-source = "python"
+# manylinux compatibility — required for PyPI uploads on Linux.
+# 'off' lets the host CI/auditwheel decide; '2014' keeps glibc >= 2.17.
+compatibility = "manylinux_2_34"

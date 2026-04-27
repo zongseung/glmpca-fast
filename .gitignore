@@ -1,0 +1,45 @@
+# Build artefacts
+target/
+dist/
+build/
+*.egg-info/
+*.so
+*.pyd
+*.dll
+*.dylib
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Virtual envs
+.venv/
+.env
+
+# uv / pip lock
+uv.lock
+
+# Rust
+Cargo.lock
+**/*.rs.bk
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets — never commit
+tokens.txt
+*.token
+.pypirc

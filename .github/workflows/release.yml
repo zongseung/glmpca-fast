@@ -1,0 +1,94 @@
+# Auto-publish to PyPI on git tag push (e.g. `git tag v0.2.0 && git push --tags`).
+#
+# Builds wheels for cp310/cp311/cp312/cp313 × Linux/macOS/Windows in parallel,
+# plus an sdist, and uploads them all to PyPI in one shot.
+#
+# Setup (one-time):
+#   1. PyPI → https://pypi.org/manage/account/publishing/ → add a "Trusted Publisher"
+#      pointing at this repo + workflow filename `release.yml`.
+#   2. (Or, fallback) Add a repo secret `PYPI_API_TOKEN` and uncomment the
+#      `with: token` line below.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [x86_64, aarch64]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          args: --release --interpreter python${{ matrix.python }} --manylinux 2_34 --out dist
+          sccache: true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-linux-${{ matrix.target }}-py${{ matrix.python }}
+          path: dist
+
+  macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        target: [x86_64, aarch64]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          args: --release --interpreter python${{ matrix.python }} --out dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-macos-${{ matrix.target }}-py${{ matrix.python }}
+          path: dist
+
+  windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "${{ matrix.python }}" }
+      - uses: PyO3/maturin-action@v1
+        with:
+          args: --release --interpreter python${{ matrix.python }} --out dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-windows-py${{ matrix.python }}
+          path: dist
+
+  sdist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: PyO3/maturin-action@v1
+        with: { command: sdist, args: --out dist }
+      - uses: actions/upload-artifact@v4
+        with: { name: wheels-sdist, path: dist }
+
+  release:
+    needs: [linux, macos, windows, sdist]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # required for PyPI Trusted Publishing
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: dist, merge-multiple: true }
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        # with:
+        #   password: ${{ secrets.PYPI_API_TOKEN }}   # only if NOT using Trusted Publishing
