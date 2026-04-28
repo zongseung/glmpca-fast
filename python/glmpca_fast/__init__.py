@@ -29,7 +29,7 @@ import numpy as np
 from glmpca_fast import _rust  # type: ignore
 
 __all__ = ["fit_poisson", "project_ols", "__version__"]
-__version__ = "0.1.0"
+__version__ = "0.1.2"
 
 Backend = Literal["rust", "torch", "auto"]
 

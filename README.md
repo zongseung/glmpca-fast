@@ -1,7 +1,7 @@
 # glmpca-fast
 
 [![PyPI](https://img.shields.io/pypi/v/glmpca-fast.svg)](https://pypi.org/project/glmpca-fast/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: GPL v3+](https://img.shields.io/badge/License-GPLv3%2B-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 Fast **GLM-PCA** (Generalised Linear Model PCA) for non-Gaussian count
 data — Rust core with optional **PyTorch GPU** backend.
@@ -153,4 +153,4 @@ this software:
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE).
+GPL-3.0-or-later — see [`LICENSE`](LICENSE).
